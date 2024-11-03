@@ -1,7 +1,7 @@
-import mysql from "mysql"
+import mysql from "mysql2"
 
 // Database connection
-const sql = mysql.createConnection({
+const sql = await mysql.createConnection({
    host: "localhost",
    user: "root",
    password: "",

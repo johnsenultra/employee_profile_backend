@@ -12,7 +12,7 @@ const EmployeeModel = {
       });
    },
 
-
+   
    // Read all employees
    getAll: (callback) => {
       const sql = `SELECT * FROM employees_table`;
@@ -32,7 +32,7 @@ const EmployeeModel = {
          if (err) {
             callback(err, null);
          } else {
-            callback(null, data);
+            callback(null, data.length > 0 ? data[0] : null);
          }
       });
    },
