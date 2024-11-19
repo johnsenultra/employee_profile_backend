@@ -146,10 +146,8 @@ export class Employee {
 
   @Column({
     type: "varchar",
-    length: 20,
     name: "password",
     select: false,
-    nullable: true,
   })
   password?: string
 
