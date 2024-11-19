@@ -10,6 +10,7 @@ import routes from "./Routes"
 import { createController } from "express-extract-routes"
 import EmployeeRoutes from "./Routes/EmployeeRoutes"
 import FamilyRoutes from "./Routes/FamilyRoutes"
+import { authenticateToken } from "./middlewares/auth.middleware"
 
 const app = express()
 
@@ -29,7 +30,11 @@ app.use("/api/family", FamilyRoutes)
 
 //generate routes base on controllers decorators
 routes.forEach((route) => {
-  app[route.method](`/v2/api` + route.path, createController(route))
+  app[route.method](
+    `/v2/api` + route.path,
+    authenticateToken(route.options?.protected),
+    createController(route)
+  )
 })
 
 const PORT = 3000

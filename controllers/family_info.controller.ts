@@ -3,7 +3,8 @@ import { route } from "express-extract-routes"
 import { FamilyInfo } from "../database/entities/family_info.entity"
 import { getRepository } from "typeorm"
 
-@route("/families")
+//protected routes means need/valid token to access the apis
+@route("/families", { protected: true })
 export class FamilyInfoController {
   @route.get("/")
   async getAll(request: Request, response: Response) {

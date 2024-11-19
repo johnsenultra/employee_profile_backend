@@ -3,7 +3,8 @@ import { route } from "express-extract-routes"
 import { getRepository, Like } from "typeorm"
 import { Employee } from "../database/entities/employee.entity"
 
-@route("/employees")
+//protected routes means need/valid token to access the apis
+@route("/employees", { protected: true })
 export class EmployeeController {
   @route.get("/")
   async getAll(request: Request, response: Response) {
