@@ -1,11 +1,13 @@
 import * as mysql from "mysql2"
+import { config } from "dotenv"
+config()
 
 // Database connection
 const sql = mysql.createConnection({
   host: process.env.TYPEORM_HOST,
   user: process.env.TYPEORM_USERNAME,
-  password: process.env.TYPEORM_PASSWORD,
-  port: +process.env.TYPEORN_PORT || 3306,
+  password: process.env.TYPEORM_PASSWORD || "",
+  port: +process.env.TYPEORM_PORT || 3306,
   database: process.env.TYPEORM_DATABASE,
 })
 

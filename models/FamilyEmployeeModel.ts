@@ -1,4 +1,4 @@
-import db from "../utils/db.js";
+import db from "../utils/db"
 
 const FamilyEmployeeModel = {
   create: (employeeId, familyData, callback) => {
@@ -19,77 +19,82 @@ const FamilyEmployeeModel = {
       father_name_extension: familyData.father_name_extension,
       mother_maiden_name: familyData.mother_maiden_name,
       mother_first_name: familyData.mother_first_name,
-      mother_middle_name: familyData.mother_middle_name
-    };
+      mother_middle_name: familyData.mother_middle_name,
+    }
     db.beginTransaction((err) => {
       if (err) {
-        return callback(err, null);
+        return callback(err, null)
       }
 
       // Insert family information
-      db.query('INSERT INTO family_information_table SET ?', familyInfo, (err, familyResult) => {
-        if (err) {
-          return db.rollback(() => {
-            callback(err, null);
-          });
-        }
+      db.query(
+        "INSERT INTO family_information_table SET ?",
+        familyInfo,
+        (err, familyResult: any) => {
+          if (err) {
+            return db.rollback(() => {
+              callback(err, null)
+            })
+          }
 
-        const familyInfoId = familyResult.insertId;
+          const familyInfoId = familyResult.insertId
 
-        // If there are children, insert them
-        if (familyData.children && familyData.children.length > 0) {
-          // Prepare children data with family_info_id
-          const childrenValues = familyData.children.map(child => [
-            familyInfoId,
-            child.name,
-            child.dateOfBirth
-          ]);
+          // If there are children, insert them
+          if (familyData.children && familyData.children.length > 0) {
+            // Prepare children data with family_info_id
+            const childrenValues = familyData.children.map((child) => [
+              familyInfoId,
+              child.name,
+              child.dateOfBirth,
+            ])
 
-          const childrenSql = 'INSERT INTO children_table (family_info_id, children_fullname, child_date_of_birth) VALUES ?';
+            const childrenSql =
+              "INSERT INTO children_table (family_info_id, children_fullname, child_date_of_birth) VALUES ?"
 
-          db.query(childrenSql, [childrenValues], (err, childrenResult) => {
-            if (err) {
-              return db.rollback(() => {
-                callback(err, null);
-              });
-            }
+            db.query(childrenSql, [childrenValues], (err, childrenResult) => {
+              if (err) {
+                return db.rollback(() => {
+                  callback(err, null)
+                })
+              }
 
-            // If everything is successful, commit the transaction
+              // If everything is successful, commit the transaction
+              db.commit((err) => {
+                if (err) {
+                  return db.rollback(() => {
+                    callback(err, null)
+                  })
+                }
+                callback(null, {
+                  familyId: familyInfoId,
+                  message: "Family information and children added successfully",
+                })
+              })
+            })
+          } else {
+            // If no children, just commit the family information
             db.commit((err) => {
               if (err) {
                 return db.rollback(() => {
-                  callback(err, null);
-                });
+                  callback(err, null)
+                })
               }
               callback(null, {
                 familyId: familyInfoId,
-                message: 'Family information and children added successfully'
-              });
-            });
-          });
-        } else {
-          // If no children, just commit the family information
-          db.commit((err) => {
-            if (err) {
-              return db.rollback(() => {
-                callback(err, null);
-              });
-            }
-            callback(null, {
-              familyId: familyInfoId,
-              message: 'Family information added successfully'
-            });
-          });
+                message: "Family information added successfully",
+              })
+            })
+          }
         }
-      });
-    });
+      )
+    })
   },
 
   // Update family information
   update: (employeeId, familyData, callback) => {
     db.beginTransaction((err) => {
       if (err) {
-        return callback(err, null);
+        return callback(err, null)
       }
 
       // First update family information
@@ -108,92 +113,94 @@ const FamilyEmployeeModel = {
         father_name_extension: familyData.father_name_extension,
         mother_maiden_name: familyData.mother_maiden_name,
         mother_first_name: familyData.mother_first_name,
-        mother_middle_name: familyData.mother_middle_name
-      };
+        mother_middle_name: familyData.mother_middle_name,
+      }
 
       db.query(
-        'UPDATE family_information_table SET ? WHERE employee_id = ?',
+        "UPDATE family_information_table SET ? WHERE employee_id = ?",
         [familyInfo, employeeId],
         (err, familyResult) => {
           if (err) {
             return db.rollback(() => {
-              callback(err, null);
-            });
+              callback(err, null)
+            })
           }
-          
+
           // Get the family_info_id
           db.query(
-            'SELECT id FROM family_information_table WHERE employee_id = ?',
+            "SELECT id FROM family_information_table WHERE employee_id = ?",
             [employeeId],
             (err, familyIdResult) => {
               if (err) {
                 return db.rollback(() => {
-                  callback(err, null);
-                });
+                  callback(err, null)
+                })
               }
 
-              const familyInfoId = familyIdResult[0].id;
+              const familyInfoId = familyIdResult[0].id
 
               // Delete existing children
               db.query(
-                'DELETE FROM children_table WHERE family_info_id = ?',
+                "DELETE FROM children_table WHERE family_info_id = ?",
                 [familyInfoId],
                 (err) => {
                   if (err) {
                     return db.rollback(() => {
-                      callback(err, null);
-                    });
+                      callback(err, null)
+                    })
                   }
 
                   // If there are children, insert them
                   if (familyData.children && familyData.children.length > 0) {
-                    const childrenValues = familyData.children.map(child => [
+                    const childrenValues = familyData.children.map((child) => [
                       familyInfoId,
                       child.name,
-                      child.dateOfBirth
-                    ]);
+                      child.dateOfBirth,
+                    ])
 
-                    const childrenSql = 'INSERT INTO children_table (family_info_id, children_fullname, child_date_of_birth) VALUES ?';
+                    const childrenSql =
+                      "INSERT INTO children_table (family_info_id, children_fullname, child_date_of_birth) VALUES ?"
 
                     db.query(childrenSql, [childrenValues], (err) => {
                       if (err) {
                         return db.rollback(() => {
-                          callback(err, null);
-                        });
+                          callback(err, null)
+                        })
                       }
 
                       db.commit((err) => {
                         if (err) {
                           return db.rollback(() => {
-                            callback(err, null);
-                          });
+                            callback(err, null)
+                          })
                         }
                         callback(null, {
-                          message: 'Family information and children updated successfully'
-                        });
-                      });
-                    });
+                          message:
+                            "Family information and children updated successfully",
+                        })
+                      })
+                    })
                   } else {
                     // If no children, just commit the family information update
                     db.commit((err) => {
                       if (err) {
                         return db.rollback(() => {
-                          callback(err, null);
-                        });
+                          callback(err, null)
+                        })
                       }
                       callback(null, {
-                        message: 'Family information updated successfully'
-                      });
-                    });
+                        message: "Family information updated successfully",
+                      })
+                    })
                   }
                 }
-              );
+              )
             }
-          );
+          )
         }
-      );
-    });
-  }
-};
+      )
+    })
+  },
+}
 
-export default FamilyEmployeeModel;
+export default FamilyEmployeeModel

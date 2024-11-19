@@ -6,6 +6,8 @@ import { createServer } from "http"
 import { createConnection } from "typeorm"
 import routes from "./Routes"
 import { createController } from "express-extract-routes"
+import EmployeeRoutes from "./Routes/EmployeeRoutes"
+import FamilyRoutes from "./Routes/FamilyRoutes"
 
 const app = express()
 
@@ -16,6 +18,9 @@ const httpServer = createServer(app)
 app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }))
 
 createConnection()
+
+app.use("/api/employees", EmployeeRoutes)
+app.use("/api/family", FamilyRoutes)
 
 //generate routes base on controllers decorators
 routes.forEach((route) => {
