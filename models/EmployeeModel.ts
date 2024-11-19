@@ -2,7 +2,7 @@ import db from "../utils/db"
 
 const EmployeeModel = {
   create: (employeeData, callback) => {
-    const sql = `INSERT INTO employees_table SET ?`
+    const sql = `INSERT INTO employees_table SET ? `
     db.query(sql, employeeData, (err, data) => {
       if (err) {
         callback(err, null)
