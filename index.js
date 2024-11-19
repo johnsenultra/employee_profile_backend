@@ -1,8 +1,7 @@
 import express from "express";
-import buffer from "buffer";
-import sql from "./utils/db.js";
 import cors from "cors";
 import EmployeeRoutes from "./Routes/EmployeeRoutes.js";
+import FamilyRoutes from "./Routes/FamilyRoutes.js"
 
 const app = express();
 
@@ -16,6 +15,7 @@ app.use(cors({
 
 // API endpoint
 app.use('/api/employees', EmployeeRoutes);
+app.use('/api/family', FamilyRoutes);
 
 const port = 3000;
 
