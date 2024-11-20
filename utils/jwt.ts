@@ -11,7 +11,7 @@ export const generateAccessToken = (employee: Partial<Employee>) =>
       data: employee,
     },
     JWT_KEY,
-    { expiresIn: process.env.NODE_ENV === "production" ? "5m" : "5h" }
+    { expiresIn: process.env.NODE_ENV === "production" ? "5m" : "10m" }
   )
 
 export const generateRefreshToken = (employee: Partial<Employee>) =>
@@ -20,5 +20,5 @@ export const generateRefreshToken = (employee: Partial<Employee>) =>
       data: employee,
     },
     JWT_KEY,
-    { expiresIn: "1d" }
+    { expiresIn: "7d" }
   )
