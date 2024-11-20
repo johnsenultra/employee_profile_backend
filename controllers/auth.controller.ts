@@ -5,6 +5,7 @@ import { Employee } from "../database/entities/employee.entity"
 import { comparePassword } from "../utils/bcrypt"
 import { generateAccessToken, generateRefreshToken } from "../utils/jwt"
 import { getCookieOptions } from "../utils/helper"
+import * as jwt from "jsonwebtoken"
 
 @route("/auth")
 export class AuthController {
@@ -35,11 +36,35 @@ export class AuthController {
     })
 
     const refreshToken = generateRefreshToken({
+      username,
       employeeId: employee.employeeId,
     })
 
     response.cookie("refreshToken", refreshToken, getCookieOptions())
 
     return response.status(200).send({ accessToken: accessToken })
+  }
+
+  @route.get("/refresh-token")
+  async refreshToken(request: Request, response: Response) {
+    const refreshToken = request.cookies.refreshToken
+
+    if (!refreshToken)
+      return response.status(406).send({ message: "refresh token is required" })
+
+    return jwt.verify(
+      refreshToken,
+      process.env?.JWT_KEY,
+      (error: any, data: { data: Employee }) => {
+        if (error)
+          return response
+            .status(406)
+            .send({ message: "refresh token is expired" })
+
+        const accessToken = generateAccessToken({ ...data?.data })
+
+        return response.status(200).send({ accessToken })
+      }
+    )
   }
 }
