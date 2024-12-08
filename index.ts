@@ -10,6 +10,7 @@ import routes from "./Routes"
 import { createController } from "express-extract-routes"
 import EmployeeRoutes from "./Routes/EmployeeRoutes"
 import FamilyRoutes from "./Routes/FamilyRoutes"
+import EducationRoutes from "./Routes/EducationRoutes"
 import { authenticateToken } from "./middlewares/auth.middleware"
 
 const app = express()
@@ -27,6 +28,7 @@ createConnection()
 
 app.use("/api/employees", EmployeeRoutes)
 app.use("/api/family", FamilyRoutes)
+app.use("/api/education", EducationRoutes)
 
 //generate routes base on controllers decorators
 routes.forEach((route) => {
