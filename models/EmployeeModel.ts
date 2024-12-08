@@ -67,7 +67,6 @@ const EmployeeModel = {
   },
 
   getUpdate: (id, callback) => {
-    //id = req.params.id
     const sql = `SELECT * FROM employees_table WHERE employee_id = ?`
     db.query(sql, [id], (err, data: any) => {
       if (err) {
