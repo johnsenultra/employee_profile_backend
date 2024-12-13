@@ -44,14 +44,19 @@ router.get("/update/:id", (req, res) => {
 
 // Update Employee
 router.put("/updateEmployee/:id", (req, res) => {
-  // Call the model method that will update the employee
-  EmployeeModel.update(req.params.id, req.body, (err, results) => {
-    if (err) return res.status(500).json({ error: err.message })
-    res.json({ message: "Employee updated successfully" })
-    console.log(results)
+  const employee_id = req.params.id
+  const employeeData = req.body
+
+  console.log("employeeData: ", employeeData)
+
+  EmployeeModel.update(employee_id, employeeData, (err, result) => {
+    if(err) return res.status(500).json({ 
+      message: "[EMPLOYEE UPDATE ERROR]",
+      error: err.message
+    })
+    res.status(200).json({ message: "Employee updated successfully" })
   })
 })
-
 // Delete Employee
 router.delete("/deleteEmployee/:id", (req, res) => {
   // Call the model method that will delete the employee
