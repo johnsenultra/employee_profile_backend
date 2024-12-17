@@ -13,7 +13,7 @@ import {
 router.get("/getEducation/:employee_id", getEducation);
 
 // Post education information
-router.post("/addEducation", addEducation);
+router.post("/addEducation/:employee_id", addEducation);
 
 // Update education information
 router.put("/updateEducation/:education_id", updateEducation);
