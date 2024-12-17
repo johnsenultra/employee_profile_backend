@@ -1,6 +1,6 @@
 import db from "../utils/db"
 
-const FamilyEmployeeModel = {
+const FamilyModel = {
   create: (employeeId, familyData, callback) => {
     // First insert into family_information_table
     const familyInfo = {
@@ -108,8 +108,8 @@ const FamilyEmployeeModel = {
         employer_name: familyData.employer_name,
         spouse_telephone_no: familyData.spouse_telephone_no,
         father_surname: familyData.father_surname,
-        father_first_name: familyData.father_firstName,
-        father_middle_name: familyData.father_middleName,
+        father_first_name: familyData.father_first_name,
+        father_middle_name: familyData.father_middle_name,
         father_name_extension: familyData.father_name_extension,
         mother_maiden_name: familyData.mother_maiden_name,
         mother_first_name: familyData.mother_first_name,
@@ -201,6 +201,64 @@ const FamilyEmployeeModel = {
       )
     })
   },
+
+  // getFamily: (id, callback) => {
+  //   const sql = `SELECT * FROM family_information_table WHERE employee_id = ?`
+  //   db.query(sql, [id], (err, data: any) => {
+  //     if (err) {
+  //       callback(err, null)
+  //     } else {
+  //       callback(null, data.length > 0 ? data[0] : null)
+  //     }
+  //   })
+  // },
+
+  // getChildren: (id, callback) => {
+  //   const sql = `SELECT * FROM children_table WHERE family_info_id = ?`
+  //   db.query(sql, [id], (err, data) => {
+  //     if(err) {
+  //       callback(err, null)
+  //     } else {
+  //       callback(null, data)
+  //     }
+  //   })
+  // }
+
+  getFamilyWithChildren: (id, callback) => {
+    // First, get the family information
+    db.query(
+      `SELECT * FROM family_information_table WHERE employee_id = ?`, [id], (err, familyData: any) => {
+        if(err) {
+          return callback(err, null)
+        }
+
+        // If no family record found, we return null
+        if(familyData.length === 0) {
+          return callback(null, null)
+        }
+
+        // Geth the family info ID to fetch children
+        const familyInfoId = familyData[0].id;
+
+        // Fetch children for his family
+        db.query(
+          `SELECT * FROM children_table WHERE family_info_id = ?`, [familyInfoId], (err, childrenData) => {
+            if(err) {
+              return callback(err, null)
+            }
+
+            // Combine family information and children
+            const result = {
+              familyInfo: familyData[0],
+              children: childrenData
+            };
+
+            callback(null, result)
+          }
+        )
+      } 
+    )
+  }
 }
 
-export default FamilyEmployeeModel
+export default FamilyModel

@@ -26,36 +26,36 @@ const EmployeeModel = {
 
   // Read employee by ID
   getById: (id, callback) => {
-    // const sql = `SELECT * FROM employees_table WHERE employee_id = ?`;
-    const sql = `
-         SELECT 
-            e.*, 
-            spouse_surname, 
-            spouse_first_name, 
-            spouse_middle_name, 
-            spouse_name_extension,
-            spouse_occupation, 
-            business_address, 
-            employer_name, 
-            spouse_telephone_no,
-            father_surname, 
-            father_first_name, 
-            father_middle_name, 
-            father_name_extension,
-            mother_maiden_name, 
-            mother_first_name, 
-            mother_middle_name,
-            CONCAT('[', GROUP_CONCAT(
-               CONCAT(
-                  '{"name": "', children_fullname, '", "date_of_birth": "', child_date_of_birth, '"}'
-                  )
-            ), ']') AS children
-         FROM employees_table e
-         LEFT JOIN family_information_table f ON e.employee_id = f.employee_id
-         LEFT JOIN children_table c ON f.id = c.family_info_id
-         WHERE e.employee_id = ?
-         GROUP BY e.employee_id;
-      `
+    const sql = `SELECT * FROM employees_table WHERE employee_id = ?`;
+    // const sql = `
+    //      SELECT 
+    //         e.*, 
+    //         spouse_surname, 
+    //         spouse_first_name, 
+    //         spouse_middle_name, 
+    //         spouse_name_extension,
+    //         spouse_occupation, 
+    //         business_address, 
+    //         employer_name, 
+    //         spouse_telephone_no,
+    //         father_surname, 
+    //         father_first_name, 
+    //         father_middle_name, 
+    //         father_name_extension,
+    //         mother_maiden_name, 
+    //         mother_first_name, 
+    //         mother_middle_name,
+    //         CONCAT('[', GROUP_CONCAT(
+    //            CONCAT(
+    //               '{"name": "', children_fullname, '", "date_of_birth": "', child_date_of_birth, '"}'
+    //               )
+    //         ), ']') AS children
+    //      FROM employees_table e
+    //      LEFT JOIN family_information_table f ON e.employee_id = f.employee_id
+    //      LEFT JOIN children_table c ON f.id = c.family_info_id
+    //      WHERE e.employee_id = ?
+    //      GROUP BY e.employee_id;
+    //   `
 
     db.query(sql, [id], (err, data: any) => {
       if (err) {
@@ -66,27 +66,35 @@ const EmployeeModel = {
     })
   },
 
-  getUpdate: (id, callback) => {
+  getUpdate: (id, employeeData, callback) => {
     const sql = `SELECT * FROM employees_table WHERE employee_id = ?`
-    db.query(sql, [id], (err, data: any) => {
-      if (err) {
-        callback(err, null)
-      } else {
-        callback(null, data.length > 0 ? data[0] : null)
-      }
-    })
-  },
-
-  // Update employee
-  update: (id, employeeData, callback) => {
-    const sql = `UPDATE employees_table SET ? WHERE employee_id = ?`
-    db.query(sql, [employeeData, id], (err, data) => {
+    db.query(sql, [id], (err, data) => {
       if (err) {
         callback(err, null)
       } else {
         callback(null, data)
       }
     })
+  },
+
+  // Update employee  
+  update: (employee_id, employeeData, callback) => {
+    // Construct the UPDATE query dynamically based on the employeeData
+    const fields = Object.keys(employeeData)
+    .map(key => `${key} = ?`)
+    .join(', ');
+
+    const values = [...Object.values(employeeData), employee_id];
+
+    const sql = `UPDATE employees_table SET ${fields} WHERE employee_id = ?`;
+
+    db.query(sql, values, (err, result) => {
+      if (err) {
+        callback(err, null);
+      } else {
+        callback(null, result);
+      }
+    });
   },
 
   // Delete employee

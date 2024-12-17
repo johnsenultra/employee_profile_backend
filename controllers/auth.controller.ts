@@ -2,10 +2,11 @@ import { Request, Response } from "express"
 import { route } from "express-extract-routes"
 import { getRepository } from "typeorm"
 import { Employee } from "../database/entities/employee.entity"
-import { comparePassword } from "../utils/bcrypt"
+import { comparePassword, hashPassword } from "../utils/bcrypt"
 import { generateAccessToken, generateRefreshToken } from "../utils/jwt"
 import { getCookieOptions } from "../utils/helper"
 import * as jwt from "jsonwebtoken"
+const bcrypt = require('bcrypt')
 
 @route("/auth")
 export class AuthController {
@@ -66,5 +67,81 @@ export class AuthController {
         return response.status(200).send({ accessToken })
       }
     )
+  }
+
+  @route.post("/signup")
+  async signup(req: Request, res: Response) {
+    try {
+      const { username, email, password, confirmPassword } = req.body;
+
+      // Validate input
+      if (!username || !email || !password) {
+        return res.status(400).json({ message: "All fields are required" });
+      }
+
+      // Validate email format (optional but recommended)
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        return res.status(400).json({ message: "Invalid email format" });
+      }
+
+      // Validate password confirmation
+      if (password !== confirmPassword) {
+        return res.status(400).json({ message: "Passwords do not match" });
+      }
+      
+      // Add a password strength validation
+      if(password.length < 8) {
+        return res.status(400).json({
+          message: "Password must be atleast 8 charecters long"
+        })
+      } 
+      const userRepository = getRepository(Employee);
+      
+      // Check if the username or email already exists
+      const existingUser = await userRepository.findOne({
+        where: [{ username }, { email }]
+      });
+
+      if (existingUser) {
+        return res.status(400).json({ 
+          message: existingUser.username === username 
+            ? "Username already exists" 
+            : "Email already exists" 
+        });
+      }
+
+      // Hash password
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      // Create new user
+      const newUser = userRepository.create({
+        username,
+        email,
+        password: hashedPassword
+      });
+
+      await userRepository.save(newUser);
+
+      // Generate Tokens
+      const accessToken = generateAccessToken({ 
+        username, 
+        employeeId: newUser.employeeId 
+      });
+      const refreshToken = generateRefreshToken({ 
+        username, 
+        employeeId: newUser.employeeId 
+      });
+
+      res.cookie("refreshToken", refreshToken, getCookieOptions());
+
+      return res.status(201).json({ 
+        message: "User registered successfully",
+        accessToken
+      });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ message: "Internal server error" });
+    }
   }
 }

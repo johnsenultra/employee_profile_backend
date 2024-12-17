@@ -8,7 +8,7 @@ import {
 import { FamilyInfo } from "./family_info.entity"
 
 @Entity("children_table")
-export class Child {
+export class ChildrenInfo {
   @PrimaryGeneratedColumn({ name: "id" })
   id: number
 

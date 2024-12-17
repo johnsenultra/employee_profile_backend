@@ -16,21 +16,28 @@ export const getEducation = async (req: Request, res: Response) => {
 
 // Add a new education information
 export const addEducation = (req, res) => {
-   const data = req.body;
-   EducationalModel.addEducationRecord(data, (err, result) => {
+   const employeeId = parseInt(req.params.employee_id);
+   
+   // Create education data object with employee_id from route parameter
+   const educationData = {
+      ...req.body,
+      employee_id: employeeId
+   };
+
+   EducationalModel.addEducationRecord(educationData, (err, result) => {
       if(err) {
          return res.status(500).json({ 
             message: "Failed to add education record",
             error: err.message, 
-         })
+         });
       } else {
          res.status(201).json({ 
             message: "Education record added successfully",
-            edication_id: result.insertId,
+            education_id: result.insertId,
          });
       }
-   })
-}
+   });
+};
 
 // Update education information
 export const updateEducation = (req: Request, res: Response) => {
@@ -71,13 +78,10 @@ export const getUpdateEducation = (req: Request, res: Response) => {
       if(err) {
          return res.status(500).json({ 
             error: err.meesage,
-            message: "GET UPDATE ERROR", 
+            message: "Failed to get education record", 
          });
       } else {
-         res.status(200).json({ 
-            message: "Education record deleted successfully",
-            education_id: result.deleteId,
-         })
+         res.status(200).json({ message: "Education record deleted successfully" })
       }
    })
 }
@@ -85,11 +89,14 @@ export const getUpdateEducation = (req: Request, res: Response) => {
 // Delete education iformation by id
 export const deleteEducation = async (req: Request, res: Response) => {
    const education_id = parseInt(req.params.education_id);
-   EducationalModel.deleteEducation(education_id, (err: any, results: any) => {
+   EducationalModel.deleteEducation(education_id, (err: any, result: any) => {
       if(err) {
             return res.status(500).json({ error: err.message });
       }  else {
-            res.status(200).json({ message: "Education record deleted successfully" });
+         res.status(200).json({ 
+            message: "Education record deleted successfully",
+            education_id: result.deleteId,
+         });
       }
    })
 }
