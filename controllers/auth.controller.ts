@@ -72,7 +72,7 @@ export class AuthController {
   @route.post("/signup")
   async signup(req: Request, res: Response) {
     try {
-      const { username, email, password } = req.body;
+      const { username, email, password, confirmPassword } = req.body;
 
       // Validate input
       if (!username || !email || !password) {
@@ -85,6 +85,17 @@ export class AuthController {
         return res.status(400).json({ message: "Invalid email format" });
       }
 
+      // Validate password confirmation
+      if (password !== confirmPassword) {
+        return res.status(400).json({ message: "Passwords do not match" });
+      }
+      
+      // Add a password strength validation
+      if(password.length < 8) {
+        return res.status(400).json({
+          message: "Password must be atleast 8 charecters long"
+        })
+      } 
       const userRepository = getRepository(Employee);
       
       // Check if the username or email already exists
