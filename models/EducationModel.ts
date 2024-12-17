@@ -19,15 +19,16 @@ const EducationalModel = {
          data.years_graduated,
          data.highest_level_unit_earned
       ];
+
       db.query(sql, values, callback), (err: any, data: any) => {
          if(err) {
-            callback(err, null);
+            return callback(err, null);
          } else {
-            callback(null, data);
+            return callback(null, data);
          }
-      } 
-      
+      }
    },
+
    // Get all education recors for an employee
    getEducation: (id: number, callback: any) => {
       const sql = `
@@ -71,32 +72,6 @@ const EducationalModel = {
       ];
       db.query(sql, values, callback);
    },
-   // Alternate method to update multiple records but had much bugs
-   // updateEducation: (id: number, educationData: any[], callback: any) => {
-      // const sql = `
-      //    UPDATE education_background_table 
-      //    SET 
-      //       education_level = ?, 
-      //       school_name = ?, 
-      //       degree_or_course = ?, 
-      //       period_from = ?, 
-      //       period_to = ?, 
-      //       years_graduated = ?, 
-      //       highest_level_unit_earned = ? 
-      //    WHERE employee_id = ?
-      // `;
-      
-      // const queries = educationData.map(data => {
-      //    return db.query(sql, [data.education_level, data.school_name, data.degree_or_course, data.period_from, data.period_to, data.years_graduated, data.highest_level_unit_earned, id], (err, data) => {
-      //       if(err) {
-      //          callback(err, null);
-      //          console.log("[UPDATE EDUCATION ERROR]", err);
-      //       } else {
-      //          console.log("Education details successfully updated!");
-      //          callback(null, data);
-      //       }
-      //    })
-      // })
 
    // getUpdate education details
    getUpdateEducation: (id: number, callback: any) => {
