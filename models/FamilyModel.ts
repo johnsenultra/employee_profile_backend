@@ -1,4 +1,3 @@
-import sql from "../utils/db"
 import db from "../utils/db"
 
 const FamilyModel = {
