@@ -83,9 +83,10 @@ export class Employee {
   @Column({
     type: "enum",
     enum: ["by birth", "by naturalization"],
+    nullable: true,
     name: "dual_citizen_type",
   })
-  dualCitizenType: "by birth" | "by naturalization"
+  dualCitizenType?: "by birth" | "by naturalization"
 
   @Column({ type: "text", name: "dual_citizen_details" })
   dualCitizenDetails: string
