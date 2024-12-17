@@ -11,6 +11,12 @@ import { createController } from "express-extract-routes"
 import EmployeeRoutes from "./Routes/EmployeeRoutes"
 import FamilyRoutes from "./Routes/FamilyRoutes"
 import EducationRoutes from "./Routes/EducationRoutes"
+import AuthRoutes from "./Routes/AuthRoutes"
+import WorkExperience from "./Routes/WorkExperienceRoutes"
+import ServiceEligibility from "./Routes/ServiceEligibilityRoutes"
+import ServiceEligibity from "./Routes/serviceEligibityRoutes"
+import VoluntaryWork from "./Routes/VoluntaryWorkRoutes"
+import TrainingProgram from "./Routes/TrainingProgramRoutes"
 import { authenticateToken } from "./middlewares/auth.middleware"
 
 const app = express()
@@ -18,17 +24,25 @@ const app = express()
 config()
 
 const httpServer = createServer(app)
-
+  
 app.use(cookieParser())
+app.use(express.json());
 app.use(bodyParser.json())
 
 app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }))
 
 createConnection()
 
+app.use("/auth", AuthRoutes)
+
 app.use("/api/employees", EmployeeRoutes)
 app.use("/api/family", FamilyRoutes)
 app.use("/api/education", EducationRoutes)
+app.use("/api/work", WorkExperience);
+app.use("/api/service-eligibility", ServiceEligibility);
+app.use("/api/service", ServiceEligibity);
+app.use("/api/voluntary", VoluntaryWork);
+app.use("/api/training", TrainingProgram);
 
 //generate routes base on controllers decorators
 routes.forEach((route) => {
