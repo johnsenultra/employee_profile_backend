@@ -13,16 +13,53 @@ const EmployeeModel = {
   },
 
   // Read all employees
-  getAll: (callback) => {
-    const sql = `SELECT * FROM employees_table`
-    db.query(sql, (err, data) => {
-      if (err) {
-        callback(err, null)
-      } else {
-        callback(null, data)
+  getAll: (page = 1, limit = 10, callback) => {
+    // Calculate offset
+    const offset = (page - 1) * limit;
+
+    // First query to get total count
+    const countSql = `SELECT COUNT(*) as total FROM employees_table`;
+    
+    // Second query to get paginated data
+    const dataSql = `
+      SELECT * FROM employees_table 
+      LIMIT ? OFFSET ?
+    `;
+
+    // Executing count query first
+    db.query(countSql, (countErr, countResult) => {
+      if (countErr) {
+        return callback(countErr, null);
       }
-    })
+
+      const total = countResult[0].total;
+
+      // Then execute data query with pagination
+      db.query(dataSql, [Number(limit), Number(offset)], (dataErr, employees) => {
+        if (dataErr) {
+          return callback(dataErr, null);
+        }
+
+        // Return both the paginated data and total count
+        callback(null, {
+          employees,
+          total,
+          page: Number(page),
+          totalPages: Math.ceil(total / limit)
+        });
+      });
+    });
   },
+  // getAll: (callback) => {
+  //   const sql = `SELECT * FROM employees_table`
+  //   db.query(sql, (err, data) => {
+  //     if (err) {
+  //       callback(err, null)
+  //     } else {
+  //       callback(null, data)
+  //     }
+  //   })
+  // },
 
   // Read employee by ID
   getById: (id, callback) => {
@@ -56,7 +93,6 @@ const EmployeeModel = {
     //      WHERE e.employee_id = ?
     //      GROUP BY e.employee_id;
     //   `
-
     db.query(sql, [id], (err, data: any) => {
       if (err) {
         callback(err, null)
@@ -109,7 +145,62 @@ const EmployeeModel = {
     })
   },
 
-  // Search employee by first name or last name
+  // Add search with pagination
+  // search: (searchTerm, page = 1, limit = 10, callback) => {
+  //   const offset = (page - 1) * limit;
+    
+  //   // Count query for search results
+  //   const countSql = `
+  //     SELECT COUNT(*) as total 
+  //     FROM employees_table 
+  //     WHERE 
+  //       surname LIKE ? OR 
+  //       first_name LIKE ? OR 
+  //       email LIKE ? OR 
+  //       employee_id LIKE ?
+  //   `;
+
+  //   // Data query for search results with pagination
+  //   const searchSql = `
+  //     SELECT * FROM employees_table 
+  //     WHERE 
+  //       surname LIKE ? OR 
+  //       first_name LIKE ? OR 
+  //       email LIKE ? OR 
+  //       employee_id LIKE ?
+  //     LIMIT ? OFFSET ?
+  //   `;
+
+  //   const searchPattern = `%${searchTerm}%`;
+  //   const searchParams = [searchPattern, searchPattern, searchPattern, searchPattern];
+
+  //   // Execute count query first
+  //   db.query(countSql, searchParams, (countErr, countResult) => {
+  //     if (countErr) {
+  //       return callback(countErr, null);
+  //     }
+
+  //     const total = countResult[0].total;
+
+  //     // Then after that execute search query with pagination
+  //     db.query(
+  //       searchSql, 
+  //       [...searchParams, Number(limit), Number(offset)],
+  //       (dataErr, employees) => {
+  //         if (dataErr) {
+  //           return callback(dataErr, null);
+  //         }
+
+  //         callback(null, {
+  //           employees,
+  //           total,
+  //           page: Number(page),
+  //           totalPages: Math.ceil(total / limit)
+  //         });
+  //       }
+  //     );
+  //   });
+  // },
   search: (term, callback) => {
     const sql = `SELECT * FROM employees_table WHERE first_name LIKE ? OR surname LIKE ?`
     const searchTerm = `%${term}%`

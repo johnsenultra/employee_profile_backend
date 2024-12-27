@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import { OtherInfoModel } from "../models/OtherInfoModel";
-import { Db } from "typeorm";
 
 // Get other information record
 export const getOtherInfo = (req: Request, res: Response) => {
