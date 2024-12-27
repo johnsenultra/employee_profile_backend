@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "lib": ["es5", "es6"],
+    "types": ["node", "express"],
     "target": "es5",
     "module": "commonjs",
     "moduleResolution": "node",

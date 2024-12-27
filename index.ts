@@ -13,10 +13,10 @@ import FamilyRoutes from "./Routes/FamilyRoutes"
 import EducationRoutes from "./Routes/EducationRoutes"
 import AuthRoutes from "./Routes/AuthRoutes"
 import WorkExperience from "./Routes/WorkExperienceRoutes"
-import ServiceEligibility from "./Routes/ServiceEligibilityRoutes"
-import ServiceEligibity from "./Routes/serviceEligibityRoutes"
+import ServiceEligibity from "./Routes/ServiceEligibilityRoutes"
 import VoluntaryWork from "./Routes/VoluntaryWorkRoutes"
 import TrainingProgram from "./Routes/TrainingProgramRoutes"
+import OtherInfo from "./Routes/OtherInfoRoutes"
 import { authenticateToken } from "./middlewares/auth.middleware"
 
 const app = express()
@@ -39,10 +39,10 @@ app.use("/api/employees", EmployeeRoutes)
 app.use("/api/family", FamilyRoutes)
 app.use("/api/education", EducationRoutes)
 app.use("/api/work", WorkExperience);
-app.use("/api/service-eligibility", ServiceEligibility);
 app.use("/api/service", ServiceEligibity);
 app.use("/api/voluntary", VoluntaryWork);
 app.use("/api/training", TrainingProgram);
+app.use("/api/other", OtherInfo)
 
 //generate routes base on controllers decorators
 routes.forEach((route) => {
