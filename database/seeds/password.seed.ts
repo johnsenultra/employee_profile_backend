@@ -1,18 +1,18 @@
 import { Connection, getRepository } from "typeorm"
 import { Factory, Seeder } from "typeorm-seeding"
 import { hashPassword } from "../../utils/bcrypt"
-import { Employee } from "../entities/employee.entity"
+import { User } from "../entities/user.entity"
 
 export default class GeneratePassword implements Seeder {
   public async run(factory: Factory, connection: Connection): Promise<any> {
-    const employeeRepo = getRepository(Employee)
-    const employess = await employeeRepo.find()
+    const userRepo = getRepository(User)
+    const users = await userRepo.find()
     const updatedEmployess = await Promise.all(
-      employess.map(async (employee) => ({
-        ...employee,
+      users.map(async (user) => ({
+        ...user,
         password: await hashPassword("admin123"),
       }))
     )
-    await employeeRepo.save(updatedEmployess)
+    await userRepo.save(updatedEmployess)
   }
 }
