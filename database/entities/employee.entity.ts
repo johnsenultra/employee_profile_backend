@@ -5,14 +5,14 @@ export class Employee {
   @PrimaryGeneratedColumn({ name: "employee_id" })
   employeeId: number
 
-  @Column({ name: "userId" })
-  userId: number
+  // @Column({ name: "userId" })
+  // userId: number
 
-  @Column({ type: "varchar", length: 50 })
-  username: string
+  // @Column({ type: "varchar", length: 50 })
+  // username: string
 
-  @Column({ type: "varchar", length: 50 })
-  userType: string
+  // @Column({ type: "varchar", length: 50 })
+  // userType: string
 
   @Column({ type: "varchar", length: 50 })
   surname: string

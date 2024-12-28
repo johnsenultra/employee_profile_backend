@@ -11,8 +11,8 @@ define(Employee, (faker: typeof Faker) => {
     const userType = faker.random.arrayElement(["staff", "admin"] as const);
     
     // Required fields
-    employee.username = username;
-    employee.userType = userType;
+    // employee.username = username;
+    // employee.userType = userType;
     employee.surname = faker.name.lastName();
     employee.firstName = faker.name.firstName();
     employee.nameExtension = faker.random.arrayElement(['', 'Jr.', 'Sr.', 'III']);
