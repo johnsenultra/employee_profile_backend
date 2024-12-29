@@ -1,9 +1,6 @@
-// database/factories/user.factory.ts
 import { define } from "typeorm-seeding";
 import { User } from "../entities/user.entity";
 import Faker from "faker";
-import { hashPassword } from "../../utils/bcrypt";
-import { Employee } from "../entities/employee.entity";
 
 // define(User, (faker: typeof Faker, context?: { employee: Employee }) => {
 //     const user = new User();

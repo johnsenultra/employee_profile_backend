@@ -1,4 +1,4 @@
-import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from "typeorm"
+import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm"
 import { Employee } from "./employee.entity"
 
 @Entity("users")
@@ -15,7 +15,7 @@ export class User {
 
   @Column({
     type: "varchar",
-    select: false // Password won't be selected by default in queries
+    select: false
   })
   password: string
 
@@ -26,8 +26,12 @@ export class User {
   })
   userType: "staff" | "admin"
 
-  @OneToOne(() => Employee, employee => employee.user)
-  employee: Employee
+  @OneToOne(() => Employee, (employee) => employee.user, {
+    cascade: true,
+    onDelete: "CASCADE"
+  })
+  @JoinColumn({ name: "employee_id" })
+  employee: Employee;
 
   @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
   createdAt: Date

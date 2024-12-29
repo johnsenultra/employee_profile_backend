@@ -1,18 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, PrimaryColumn } from "typeorm"
 import { User } from "./user.entity"
 @Entity("employees_table")
 export class Employee {
   @PrimaryGeneratedColumn({ name: "employee_id" })
   employeeId: number
-
-  // @Column({ name: "userId" })
-  // userId: number
-
-  // @Column({ type: "varchar", length: 50 })
-  // username: string
-
-  // @Column({ type: "varchar", length: 50 })
-  // userType: string
 
   @Column({ type: "varchar", length: 50 })
   surname: string
@@ -145,7 +136,6 @@ export class Employee {
   @Column({ type: "varchar", length: 20, nullable: true, name: "middle_name" })
   middleName?: string
 
-  @OneToOne(() => User, user => user.employee)
-  @JoinColumn()
-  user: User
+  @OneToOne(() => User, (user) => user.employee)
+  user: User;
 }
