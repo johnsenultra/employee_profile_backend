@@ -42,7 +42,7 @@ export const addTraining = (req: Request, res: Response) => {
 
 // Update training program information by id
 export const updateTraining = (req: Request, res: Response) => {
-   const training_program_id = req.params.id;
+   const training_program_id = req.params.training_program_id;
    const trainingProgramData = req.body;
 
    TrainingProgramModel.updateTraining(parseInt(training_program_id), trainingProgramData, (err: Error, result) => {

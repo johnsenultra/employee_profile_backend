@@ -43,7 +43,7 @@ export const addOtherInfo = (req: Request, res: Response) => {
 
 // Update other information record
 export const updateOtherInfo = (req: Request, res: Response) => {
-   const other_info_id = parseInt(req.params.id);
+   const other_info_id = parseInt(req.params.other_info_id);
    const otherInfoData = req.body;
 
    OtherInfoModel.updateOtherInfo(other_info_id, otherInfoData, (err: Error, result: any) => {
