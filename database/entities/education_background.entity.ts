@@ -53,6 +53,9 @@ export class EducationBackground {
   @Column({ type: "varchar", length: 255, name: "highest_level_unit_earned" })
   highestLevelUnitEarned: string
 
+  @Column({ type: "varchar",length: 255, name: "academic_or_scholarship_recieved" })
+  academicOrScholarshipRecieved: string
+  
   @ManyToOne(() => Employee, (employee) => employee.employeeId, {
     onDelete: "CASCADE",
     onUpdate: "CASCADE",
