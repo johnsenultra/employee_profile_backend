@@ -104,4 +104,15 @@
     })
   })
 
+  // Get total employees
+  router.get("/totalEmployee", (req, res) => {
+    EmployeeModel.totalEmployees((err, result) => {
+      if(err) {
+        return res.status(500).json({ error: err.message })
+      } else {
+        res.status(200).json(result)
+      }
+    })
+  })
+
   export default router

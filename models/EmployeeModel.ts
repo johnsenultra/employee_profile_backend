@@ -212,5 +212,19 @@ const EmployeeModel = {
       }
     })
   },
+
+  // Get total employees
+  totalEmployees: (callback) => {
+    const sql = `SELECT COUNT(*) as total FROM employees_table`
+    db.query(sql, (err, data) => {
+      if (err) {
+        callback(err, null)
+      } else {
+        callback(null, data[0].total)
+      }
+    })
+  }
+
+  //
 }
 export default EmployeeModel

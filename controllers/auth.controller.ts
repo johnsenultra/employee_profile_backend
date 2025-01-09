@@ -104,6 +104,7 @@ export class AuthController {
       console.error(error);
       return response.status(500).json({ message: "Internal server error" });
     }
+  }
 // async signup(request: Request, response: Response) {
 //    try {
 //       const { username, password, confirmPassword, userType, employeeId } = request.body;
@@ -176,7 +177,6 @@ export class AuthController {
 //       console.error(error);
 //       return response.status(500).json({ message: "Internal server error" });
 //    }
-}
 
 
   @route.get("/refresh-token")

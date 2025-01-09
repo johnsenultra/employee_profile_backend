@@ -56,6 +56,7 @@ const trainingProgramModel = {
       const values = [
          trainingProgramData.title_training_programs || null,
          trainingProgramData.period_date_from || null,
+         trainingProgramData.period_date_to || null,
          trainingProgramData.number_of_hours || null,
          trainingProgramData.type_of_LD || null,
          trainingProgramData.conducted_by || null,

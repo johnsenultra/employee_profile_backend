@@ -5,8 +5,8 @@ const EducationalModel = {
    addEducationRecord: (data, callback) => {
       const sql = `
          INSERT INTO education_background_table
-         (employee_id, education_level, school_name, degree_or_course, period_from, period_to, years_graduated, highest_level_unit_earned)
-         VALUES(?, ?, ?, ?, ?, ?, ?, ?)
+         (employee_id, education_level, school_name, degree_or_course, period_from, period_to, years_graduated, highest_level_unit_earned, academic_or_scholarship_recieved)
+         VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)
       `;
 
       const values = [
@@ -17,7 +17,8 @@ const EducationalModel = {
          data.period_from,
          data.period_to,
          data.years_graduated,
-         data.highest_level_unit_earned
+         data.highest_level_unit_earned,
+         data.academic_or_scholarship_recieved
       ];
 
       db.query(sql, values, callback), (err: any, data: any) => {
@@ -46,7 +47,7 @@ const EducationalModel = {
    },
 
    // Update educational record by its id
-   updateEducation: (employee_id: number, educationData: any, callback: any) => {
+   updateEducation: (educational_id: number, educationData: any, callback: any) => {
       const sql =`
          UPDATE education_background_table
          SET 
@@ -56,8 +57,9 @@ const EducationalModel = {
             period_from = ?,
             period_to = ?,
             years_graduated = ?,
-            highest_level_unit_earned = ?
-         WHERE education_id = ?;
+            highest_level_unit_earned = ?,
+            academic_or_scholarship_recieved = ?
+         WHERE educational_id = ?;
       `
 
       const values = [
@@ -68,7 +70,8 @@ const EducationalModel = {
          educationData.period_to || null,
          educationData.years_graduated || null,
          educationData.highest_level_unit_earned || null,
-         employee_id
+         educationData.academic_or_scholarship_recieved || null,
+         educational_id
       ];
       db.query(sql, values, callback);
    },

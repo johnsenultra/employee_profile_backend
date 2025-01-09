@@ -17,7 +17,7 @@ export const getEducation = async (req: Request, res: Response) => {
 // Add a new education information
 export const addEducation = (req, res) => {
    const employeeId = parseInt(req.params.employee_id);
-   
+      
    // Create education data object with employee_id from route parameter
    const educationData = {
       ...req.body,
@@ -32,7 +32,7 @@ export const addEducation = (req, res) => {
          });
       } else {
          res.status(201).json({ 
-            message: "Education record added successfully",
+            message: "Education record added successfully",                         
             education_id: result.insertId,
          });
       }
@@ -97,6 +97,6 @@ export const deleteEducation = async (req: Request, res: Response) => {
             message: "Education record deleted successfully",
             education_id: result.deleteId,
          });
-      }
+      } 
    })
 }
