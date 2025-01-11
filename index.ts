@@ -28,6 +28,7 @@ const httpServer = createServer(app)
 app.use(cookieParser())
 app.use(express.json());
 app.use(bodyParser.json())
+app.use('/uploads', express.static('public/uploads'));
 
 app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }))
 
