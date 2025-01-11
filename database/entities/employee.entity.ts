@@ -136,6 +136,13 @@ export class Employee {
   @Column({ type: "varchar", length: 20, nullable: true, name: "middle_name" })
   middleName?: string
 
+  // Add profile picture columns
+  @Column({ type: "varchar", length: 255, nullable: true, name: "profile_image" })
+  profileImageUrl?: string
+
+  // @Column({ type: "varchar", length: 100, nullable: true, name: "image_public_id" })
+  // imagePublicId?: string
+
   @OneToOne(() => User, (user) => user.employee)
   user: User;
 }
