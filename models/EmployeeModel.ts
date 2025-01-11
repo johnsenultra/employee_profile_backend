@@ -102,7 +102,7 @@ const EmployeeModel = {
     })
   },
 
-  getUpdate: (id, employeeData, callback) => {
+  getUpdate: (id, callback) => {
     const sql = `SELECT * FROM employees_table WHERE employee_id = ?`
     db.query(sql, [id], (err, data) => {
       if (err) {
@@ -145,73 +145,18 @@ const EmployeeModel = {
     })
   },
 
-  // Add search with pagination
-  // search: (searchTerm, page = 1, limit = 10, callback) => {
-  //   const offset = (page - 1) * limit;
-    
-  //   // Count query for search results
-  //   const countSql = `
-  //     SELECT COUNT(*) as total 
-  //     FROM employees_table 
-  //     WHERE 
-  //       surname LIKE ? OR 
-  //       first_name LIKE ? OR 
-  //       email LIKE ? OR 
-  //       employee_id LIKE ?
-  //   `;
-
-  //   // Data query for search results with pagination
-  //   const searchSql = `
-  //     SELECT * FROM employees_table 
-  //     WHERE 
-  //       surname LIKE ? OR 
-  //       first_name LIKE ? OR 
-  //       email LIKE ? OR 
-  //       employee_id LIKE ?
-  //     LIMIT ? OFFSET ?
-  //   `;
-
-  //   const searchPattern = `%${searchTerm}%`;
-  //   const searchParams = [searchPattern, searchPattern, searchPattern, searchPattern];
-
-  //   // Execute count query first
-  //   db.query(countSql, searchParams, (countErr, countResult) => {
-  //     if (countErr) {
-  //       return callback(countErr, null);
+  // search: (term, callback) => {
+  //   const sql = `SELECT * FROM employees_table WHERE first_name LIKE ? OR surname LIKE ?`
+  //   const searchTerm = `%${term}%`
+  //   db.query(sql, [searchTerm, searchTerm], (err, data) => {
+  //     if (err) {
+  //       callback(err, null)
+  //     } else {
+  //       callback(null, data)
   //     }
-
-  //     const total = countResult[0].total;
-
-  //     // Then after that execute search query with pagination
-  //     db.query(
-  //       searchSql, 
-  //       [...searchParams, Number(limit), Number(offset)],
-  //       (dataErr, employees) => {
-  //         if (dataErr) {
-  //           return callback(dataErr, null);
-  //         }
-
-  //         callback(null, {
-  //           employees,
-  //           total,
-  //           page: Number(page),
-  //           totalPages: Math.ceil(total / limit)
-  //         });
-  //       }
-  //     );
-  //   });
+  //   })
   // },
-  search: (term, callback) => {
-    const sql = `SELECT * FROM employees_table WHERE first_name LIKE ? OR surname LIKE ?`
-    const searchTerm = `%${term}%`
-    db.query(sql, [searchTerm, searchTerm], (err, data) => {
-      if (err) {
-        callback(err, null)
-      } else {
-        callback(null, data)
-      }
-    })
-  },
+  
 
   // Get total employees
   totalEmployees: (callback) => {
@@ -223,8 +168,157 @@ const EmployeeModel = {
         callback(null, data[0].total)
       }
     })
-  }
+  },
+  
 
-  //
+  // Uploading image
+  addProfileImage: (employeeId, filePath, callback) => {
+    // SQL query to update an existing employee's profile image
+    const sql = `
+      UPDATE employees_table 
+      SET profile_image = ?
+      WHERE employee_id = ?
+    `;
+    
+    // Simple validation
+    if (!employeeId || !filePath) {
+        return callback(new Error('Employee ID and file path are required'), null);
+    }
+
+    const imageValue = filePath.profile_image || filePath;
+    
+    db.query(sql, [imageValue, employeeId], (err, result) => {
+      if (err) {
+        callback(err, null);
+      } else {
+        callback(null, result); 
+      }
+    });
+  },
+
+  getProfileImage: (employeeId, callback) => {
+    const sql = `
+        SELECT profile_image 
+        FROM employees_table
+        WHERE employee_id = ?
+    `;
+    
+    db.query(sql, [employeeId], (err, rows) => {
+        if (err) {
+            callback(err, null);
+        } else if (!rows?.[0]) {
+            callback(new Error('Employee not found'), null);
+        } else {
+            callback(null, rows[0]);
+        }
+    });
+  },
+
+  search: (searchTerm, page = 1, limit = 10, callback) => {
+    let sql = "SELECT * FROM employees_table WHERE 1=1";
+    const queryParams = [];
+
+    if (searchTerm) {
+      sql += " AND (first_name LIKE ? OR surname LIKE ?)";
+      queryParams.push(`%${searchTerm}%`, `%${searchTerm}%`);
+    }
+
+    // Add pagination
+    const offset = (page - 1) * limit;
+    sql += " LIMIT ? OFFSET ?";
+    queryParams.push(limit, offset);
+
+    // Execute query
+    db.query(sql, queryParams, (err, data) => {
+      if (err) {
+        callback(err, null);
+        return;
+      }
+
+      // Get total count for pagination
+      const countSql = sql.replace("SELECT *", "SELECT COUNT(*) as total").split("LIMIT")[0];
+      const countParams = queryParams.slice(0, -2);
+
+      db.query(countSql, countParams, (countErr, countData) => {
+        if (countErr) {
+          callback(countErr, null);
+          return;
+        }
+
+        callback(null, {
+          employees: data,
+          total: countData[0].total,
+          page: page,
+          limit: limit,
+          totalPages: Math.ceil(countData[0].total / limit)
+        });
+      });
+    });
+  },
+
+  filter: (filterParams, callback) => {
+    let sql = "SELECT * FROM employees_table WHERE 1=1";
+    const queryParams = [];
+
+    // Add civil status filter
+    if (filterParams.civilStatus) {
+      sql += " AND civil_status = ?";
+      queryParams.push(filterParams.civilStatus);
+    }
+
+    // Add department filter
+    // if (filterParams.department) {
+    //   sql += " AND department = ?";
+    //   queryParams.push(filterParams.department);
+    // }
+
+    // // Add date range filter
+    // if (filterParams.dateFrom && filterParams.dateTo) {
+    //   sql += " AND date_of_birth BETWEEN ? AND ?";
+    //   queryParams.push(filterParams.dateFrom, filterParams.dateTo);
+    // }
+
+    // Add sorting
+    if (filterParams.sortBy) {
+      const validColumns = ['employee_id', 'first_name', 'surname', 'date_of_birth', 'civil_status', 'department'];
+      const column = validColumns.includes(filterParams.sortBy) ? filterParams.sortBy : 'employee_id';
+      const order = filterParams.sortOrder?.toUpperCase() === 'DESC' ? 'DESC' : 'ASC';
+      sql += ` ORDER BY ${column} ${order}`;
+    }
+
+    // Add pagination
+    const page = parseInt(filterParams.page) || 1;
+    const limit = parseInt(filterParams.limit) || 10;
+    const offset = (page - 1) * limit;
+    sql += " LIMIT ? OFFSET ?";
+    queryParams.push(limit, offset);
+
+    // Execute query
+    db.query(sql, queryParams, (err, data) => {
+      if (err) {
+        callback(err, null);
+        return;
+      }
+
+      // Get total count for pagination
+      const countSql = sql.replace("SELECT *", "SELECT COUNT(*) as total").split("LIMIT")[0];
+      const countParams = queryParams.slice(0, -2);
+
+      db.query(countSql, countParams, (countErr, countData) => {
+        if (countErr) {
+          callback(countErr, null);
+          return;
+        }
+
+        callback(null, {
+          employees: data,
+          total: countData[0].total,
+          page: page,
+          limit: limit,
+          totalPages: Math.ceil(countData[0].total / limit)
+        });
+      });
+    });
+  }
 }
 export default EmployeeModel
