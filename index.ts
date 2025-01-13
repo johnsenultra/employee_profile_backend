@@ -17,6 +17,7 @@ import ServiceEligibity from "./Routes/ServiceEligibilityRoutes"
 import VoluntaryWork from "./Routes/VoluntaryWorkRoutes"
 import TrainingProgram from "./Routes/TrainingProgramRoutes"
 import OtherInfo from "./Routes/OtherInfoRoutes"
+import SuperAdmin from "./Routes/superAdminRoutes"
 import { authenticateToken } from "./middlewares/auth.middleware"
 
 const app = express()
@@ -44,6 +45,8 @@ app.use("/api/service", ServiceEligibity);
 app.use("/api/voluntary", VoluntaryWork);
 app.use("/api/training", TrainingProgram);
 app.use("/api/other", OtherInfo)
+
+app.use('/super-admin', SuperAdmin);
 
 //generate routes base on controllers decorators
 routes.forEach((route) => {
