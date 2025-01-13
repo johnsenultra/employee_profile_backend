@@ -1,5 +1,6 @@
 import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm"
 import { Employee } from "./employee.entity"
+import { UserType } from "../../types/user.types";
 
 @Entity("users")
 export class User {
@@ -20,11 +21,11 @@ export class User {
   password: string
 
   @Column({
-   type: "enum",
-   enum: ["staff", "admin"],
-   default: "staff"
+    type: "enum",
+    enum: ["super_admin", "admin", "staff"],
+    default: "staff"
   })
-  userType: "staff" | "admin"
+  userType: "super_admin" | "admin" | "staff";
 
   @OneToOne(() => Employee, (employee) => employee.user, {
     cascade: true,
