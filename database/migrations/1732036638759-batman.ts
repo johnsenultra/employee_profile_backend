@@ -4,15 +4,31 @@ export class batman1732036638759 implements MigrationInterface {
     name = 'batman1732036638759'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
+        // Create users table with updated enum
         await queryRunner.query(`
             CREATE TABLE \`users\` (
                 \`user_id\` INT NOT NULL AUTO_INCREMENT,
                 \`username\` VARCHAR(50) NOT NULL UNIQUE,
                 \`password\` VARCHAR(255) NOT NULL,
-                \`role\` ENUM('staff', 'admin') NOT NULL DEFAULT 'staff',
+                \`role\` ENUM('staff', 'admin', 'super_admin') NOT NULL DEFAULT 'staff',
                 PRIMARY KEY (\`user_id\`)
             ) ENGINE=InnoDB
         `);
+
+        // Create super_admins table
+        await queryRunner.query(`
+            CREATE TABLE \`super_admins\` (
+                \`id\` INT NOT NULL AUTO_INCREMENT,
+                \`username\` VARCHAR(50) NOT NULL UNIQUE,
+                \`password\` VARCHAR(255) NOT NULL,
+                \`role\` ENUM('staff', 'admin', 'super_admin') NOT NULL DEFAULT 'super_admin',
+                \`createdAt\` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                \`updatedAt\` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                \`isActive\` BOOLEAN NOT NULL DEFAULT true,
+                PRIMARY KEY (\`id\`)
+            ) ENGINE=InnoDB
+        `);
+
         await queryRunner.query(`
             ALTER TABLE \`employees_table\`
             DROP COLUMN \`username\`,
@@ -39,6 +55,9 @@ export class batman1732036638759 implements MigrationInterface {
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
+        // Add drop table for super_admins before other drops
+        await queryRunner.query("DROP TABLE `super_admins`");
+
         await queryRunner.query("ALTER TABLE `education_background_table` DROP FOREIGN KEY `FK_cd0f81c198da701d1df90da682e`");
         await queryRunner.query("ALTER TABLE `voluntary_work` DROP FOREIGN KEY `FK_68f5448fe217de1f6ebd5996906`");
         await queryRunner.query("ALTER TABLE `service_eligibity` DROP FOREIGN KEY `FK_68f5448fe217de1f6ebd5996906`");
