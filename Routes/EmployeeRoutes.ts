@@ -69,6 +69,20 @@ router.get(
   }
 );
 
+
+// Create Employee
+router.post("/addEmployee", (req, res) => {
+  EmployeeModel.create(req.body, (err, results) => {
+    if (err) {
+      return res.status(500).json({ error: err.message })
+    }
+    res.status(201).json({
+      message: "Employee Created successfully",
+      employeeId: results.insertId,
+    })
+  })
+})
+
 // Get All Employess
 router.get('/getEmployees', (req, res) => {
   const page = Number(req.query.page) || 1;
