@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { route } from "express-extract-routes";
 import { getRepository } from "typeorm";
 import { User } from "../database/entities/user.entity";
+import { SuperAdmin } from "../database/entities/super_admin.entity";
 import { Employee } from "../database/entities/employee.entity";
 import { comparePassword, hashPassword } from "../utils/bcrypt";
 import { generateAccessToken, generateRefreshToken } from "../utils/jwt";
@@ -16,6 +17,38 @@ export class AuthController {
     const password = request.body?.password as string;
     
     try {
+
+      // First try super admin login
+      const superAdmin = await getRepository(SuperAdmin)
+      .createQueryBuilder("super_admin")
+      .where("super_admin.username = :username", { username })
+      .addSelect("super_admin.password")
+      .getOne();
+
+      if (superAdmin && await comparePassword(password, superAdmin.password)) {
+        const accessToken = generateAccessToken({
+          username,
+          id: superAdmin.id,
+          userType: "super_admin",
+        });
+
+        const refreshToken = generateRefreshToken({
+          username,
+          id: superAdmin.id,
+          userType: "super_admin",
+        });
+
+        response.cookie("refreshToken", refreshToken, getCookieOptions());
+
+        return response.status(200).json({
+          accessToken,
+          user: {
+            id: superAdmin.id,
+            username: superAdmin.username,
+            userType: "super_admin"
+          }
+        });
+      }
 
       const user = await getRepository(User)
       .createQueryBuilder("user")
