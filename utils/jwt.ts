@@ -15,11 +15,17 @@ export const generateAccessToken = (user: Partial<User>) =>
     { expiresIn: process.env.NODE_ENV === "production" ? "5m" : "10m" }
   )
 
-export const generateRefreshToken = (user: Partial<User>) =>
-  sign(
+export const generateRefreshToken = (user: Partial<User>) => {
+
+  const expirationTime = user.userType === "super_admin" 
+  ? "2d"  // 2 days for super admin
+  : "7d"  // 7 days for regular users
+
+  return sign(
     {
       data: user,
     },
     JWT_KEY,
-    { expiresIn: "7d" }
+    { expiresIn: expirationTime }
   )
+}
