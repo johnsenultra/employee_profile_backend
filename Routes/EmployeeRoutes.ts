@@ -142,8 +142,8 @@ router.delete("/deleteEmployee/:id", (req, res) => {
 })
 
 // Get total employees
-router.get("/totalEmployee", (req, res) => {
-  EmployeeModel.totalEmployees((err, result) => {
+router.get("/totalEmployee", (req: Request, res: Response) => {
+  EmployeeModel.totalEmployees((err: Error, result: any) => {
     if(err) {
       return res.status(500).json({ error: err.message })
     } else {
@@ -151,10 +151,6 @@ router.get("/totalEmployee", (req, res) => {
     }
   })
 })
-
-
-
-
 
 router.get("/search", (req, res) => {
   const { term, page, limit } = req.query;
