@@ -2,7 +2,7 @@ import db from "../utils/db"
 
 const EducationalModel = { 
    // Add a new educational background record
-   addEducationRecord: (data, callback) => {
+   addEducationRecord: (data: any, callback: any) => {
       const sql = `
          INSERT INTO education_background_table
          (employee_id, education_level, school_name, degree_or_course, period_from, period_to, years_graduated, highest_level_unit_earned, academic_or_scholarship_recieved)
