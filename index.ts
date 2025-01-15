@@ -17,6 +17,7 @@ import ServiceEligibity from "./Routes/ServiceEligibilityRoutes"
 import VoluntaryWork from "./Routes/VoluntaryWorkRoutes"
 import TrainingProgram from "./Routes/TrainingProgramRoutes"
 import OtherInfo from "./Routes/OtherInfoRoutes"
+import Position from "./Routes/PositionRoutes"
 import SuperAdmin from "./Routes/superAdminRoutes"
 import { authenticateToken } from "./middlewares/auth.middleware"
 
@@ -45,7 +46,7 @@ app.use("/api/service", ServiceEligibity);
 app.use("/api/voluntary", VoluntaryWork);
 app.use("/api/training", TrainingProgram);
 app.use("/api/other", OtherInfo)
-
+app.use("/api", Position )
 app.use('/super-admin', SuperAdmin);
 
 //generate routes base on controllers decorators
