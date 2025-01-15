@@ -1,4 +1,3 @@
-import * as express from "express";
 import { Request, Response } from "express";
 import  EducationalModel  from "../models/EducationModel";
 
