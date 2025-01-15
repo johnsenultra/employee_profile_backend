@@ -1,5 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, PrimaryColumn } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, PrimaryColumn, ManyToOne } from "typeorm"
 import { User } from "./user.entity"
+import { Position } from "./position.entity"
+import { PositionCategory } from "./position_category.entity"
 @Entity("employees_table")
 export class Employee {
   @PrimaryGeneratedColumn({ name: "employee_id" })
@@ -143,6 +145,15 @@ export class Employee {
   // @Column({ type: "varchar", length: 100, nullable: true, name: "image_public_id" })
   // imagePublicId?: string
 
+  @ManyToOne(() => Position, (position) => position.employees)
+  @JoinColumn({ name: "position_id" })
+  position: Position;
+
+  @ManyToOne(() => PositionCategory, (category) => category.employees)
+  @JoinColumn({ name: "category_id" })
+  category: PositionCategory;
+
   @OneToOne(() => User, (user) => user.employee)
   user: User;
+  
 }
