@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
-import  EducationalModel  from "../models/EducationModel";
+import EducationalModel from "../models/EducationModel";
 
 // Get all education information
 export const getEducation = async (req: Request, res: Response) => {
    const employee_id = parseInt(req.params.employee_id);
-   EducationalModel.getEducation(employee_id, (err, result) => {
+   EducationalModel.getEducation(employee_id, (err: Error, result) => {
       if(err)  {
          return res.status(500).json({ error: err.message });
       } else {
