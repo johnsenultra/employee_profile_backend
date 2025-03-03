@@ -10,12 +10,15 @@ const superAdminController = new SuperAdminController();
 const controllerMethods = {
   signin: superAdminController.signin.bind(superAdminController),
   createUser: superAdminController.createUser.bind(superAdminController),
-  getUsers: superAdminController.getUsers.bind(superAdminController)
+  getUsers: superAdminController.getUsers.bind(superAdminController),
+  getUsersCount: superAdminController.getUsersCount.bind(superAdminController),
+  searchUsers: superAdminController.searchUsers.bind(superAdminController),
+  changeUserPassword: superAdminController.changeUserPassword.bind(superAdminController),
 };
 
 // Public route - no authentication needed
 router.post('/signin', controllerMethods.signin);
-
+  
 // Protected routes - need both authentication and super admin rights
 router.post(
   '/create-user',
@@ -30,5 +33,23 @@ router.get(
   superAdminGuard,
   controllerMethods.getUsers
 );
+router.get(
+  '/users/count',
+  authenticateToken(true) as any,
+  superAdminGuard,
+  controllerMethods.getUsersCount
+)
+router.get(
+  '/users/search',
+  authenticateToken(true) as any,
+  superAdminGuard,
+  controllerMethods.searchUsers
+);
+router.put(
+  '/users/:id/password',
+  authenticateToken(true) as any,
+  superAdminGuard,
+  controllerMethods.changeUserPassword
+)
 
 export default router;
