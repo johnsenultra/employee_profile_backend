@@ -12,7 +12,7 @@ export const generateAccessToken = (user: Partial<User>) =>
       data: user,
     },
     JWT_KEY,
-    { expiresIn: process.env.NODE_ENV === "production" ? "5m" : "10m" }
+    { expiresIn: process.env.NODE_ENV === "production" ? "2d" : "3d" }
   )
 
 export const generateRefreshToken = (user: Partial<User>) => {
