@@ -40,6 +40,7 @@ export class batman1732036638759 implements MigrationInterface {
 
     public async down(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query("DROP TABLE `super_admins`");
+        await queryRunner.query("DROP TABLE `users`");
 
         await queryRunner.query("ALTER TABLE `education_background_table` DROP FOREIGN KEY `FK_cd0f81c198da701d1df90da682e`");
         await queryRunner.query("ALTER TABLE `voluntary_work` DROP FOREIGN KEY `FK_68f5448fe217de1f6ebd5996906`");
@@ -59,7 +60,6 @@ export class batman1732036638759 implements MigrationInterface {
         await queryRunner.query("ALTER TABLE `employees_table` DROP FOREIGN KEY `FK_employees_users`");
         await queryRunner.query("ALTER TABLE `employees_table` DROP COLUMN `user_id`");
         await queryRunner.query("ALTER TABLE `employees_table` ADD COLUMN `username` varchar(20) NULL, ADD COLUMN `password` varchar(255) NOT NULL");
-        await queryRunner.query("DROP TABLE `users`");
 
         await queryRunner.query("CREATE TABLE `positions_category` (`id` int NOT NULL AUTO_INCREMENT, `category_name` enum ('Faculty', 'Non-Teaching Staff') NOT NULL, PRIMARY KEY (`id`)) ENGINE=InnoDB");
         
