@@ -19,6 +19,8 @@ import TrainingProgram from "./Routes/TrainingProgramRoutes"
 import OtherInfo from "./Routes/OtherInfoRoutes"
 import Position from "./Routes/PositionRoutes"
 import SuperAdmin from "./Routes/superAdminRoutes"
+import Admin from "./Routes/AdminRoutes"
+import Excel from "./Routes/PDsRoutes"
 import { authenticateToken } from "./middlewares/auth.middleware"
 
 const app = express()
@@ -31,8 +33,12 @@ app.use(cookieParser())
 app.use(express.json());
 app.use(bodyParser.json())
 app.use('/uploads', express.static('public/uploads'));
-
-app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }))
+app.use(
+  cors({ 
+    origin: process.env.CLIENT_URL, credentials: true,
+    exposedHeaders: ["Content-Disposition"]
+  })
+)
 
 createConnection()
 
@@ -48,6 +54,8 @@ app.use("/api/training", TrainingProgram);
 app.use("/api/other", OtherInfo)
 app.use("/api", Position )
 app.use('/super-admin', SuperAdmin);
+app.use('/admin', Admin)
+app.use('/api', Excel);
 
 //generate routes base on controllers decorators
 routes.forEach((route) => {
