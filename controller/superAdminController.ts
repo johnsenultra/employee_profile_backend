@@ -308,7 +308,7 @@ export class SuperAdminController {
         return response.status(403).json({ message: "Access denied" });
       }
 
-      const userId = request.params.id;
+      const userId = Number(request.params.id)
       const userRepository = getRepository(User);
 
       // Check if user exists
