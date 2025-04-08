@@ -14,8 +14,8 @@ export class EmployeeController {
 
   @route.get("/:id")
   async getOne(request: Request, response: Response) {
-    const employee = await getRepository(Employee).findOne(request.params.id)
-    return employee
+    // const employee = await getRepository(Employee).findOne(request.params.id)
+    // return employee
   }
 
   @route.post("/")
